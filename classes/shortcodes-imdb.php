@@ -1,6 +1,7 @@
 <?php
 /**
  * http://www.omdbapi.com/?i=tt2446980&plot=short&r=json
+ * Âü°í http://99webtools.com/blog/php-get-movie-information-from-imdb/
  */
 // Shortcode Example
 // [sb_movie_infobox_from_imdb movieid="tt2446980"]
