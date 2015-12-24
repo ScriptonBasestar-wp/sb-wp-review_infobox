@@ -4,7 +4,7 @@
  * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
  */
 // Shortcode Example
-// [sb_movie_infobox_from_imdb movieid="tt2446980"]
+// [sb_movie_infobox_from_imdb id="tt2446980"]
 
 
 function fn_sb_movie_infobox_from_imdb( $atts ) {
@@ -35,8 +35,6 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
     </div>
 </div>
 ";
-//    echo($out);
-
 //  return 'SB movie infobox operation failed: ' . $response->get_error_message();
     return $out;
 }
@@ -63,17 +61,10 @@ function fn_sb_movie_infobox_cache($id, $detailType)
 //        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
         $json = json_decode($rawResponse, true);
         $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
-        echo("jsonResult". $jsonResult . "<br/>");
+//        echo("jsonResult". $jsonResult . "<br/>");
         $img = file_get_contents_curl($json['Poster']);
-        file_put_contents($imageCacheDir, $img);
-        echo("<br/>");
-        echo("poster " . $json['Poster']);
+        $jsonResult = file_put_contents($imageCacheDir, $img);
         $json['Poster'] = $imageCacheUrl;
-        echo("<br/>");
-        echo("image " . $imageCacheDir);
-        echo("<br/>");
-        echo("image " . $imageCacheUrl);
-        echo("<br/>");
     }else{
         $rawResponse = file_get_contents($jsonCacheDir);
         $json = json_decode($rawResponse, true);
