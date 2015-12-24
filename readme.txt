@@ -6,13 +6,13 @@ Tags: imdb, naver, daum, movie, shortcode, film, cinema,
 Requires at least: 4.4
 Tested up to: 4.4
 Stable tag: 0.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: GPLv3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Display movie information from IMDB in wordpress post.
 
 == Description ==
-This plugin helps to add movie information (from IMDB) in wordpress post using shortcode [imdb id="imdbmovieid"].
+This plugin helps to add movie information (from IMDB) in wordpress post using shortcode [sb_movie_infobox_from_imdb id="tt2446980"].
 **IMDB Info Box** is using [omdbapi.com](http://www.omdbapi.com) API which provides information from Imdb.
 
 Read more how this plugin works http://99webtools.com/blog/php-get-movie-information-from-imdb/
@@ -25,7 +25,7 @@ Using the Plugin Manager
 
 1. Click Plugins
 2. Click Add New
-3. Search for `imdb-info-box`
+3. Search for `sb-movie-infobox`
 4. Click Install
 5. Click Install Now
 6. Click Activate Plugin
@@ -50,35 +50,12 @@ Cache is crucial to `IMDB Info Box` plugin. As first imdb searchs are quite time
 = How to display full plot on movie? =
 
 To display full plot use `plot` attribute eg
-`[imdb id="tt0910970" plot="short"]` for short plot (default)
-`[imdb id="tt0910970" plot="full"]` for full plot
+`[sb_movie_infobox_from_imdb id="tt0910970"]` default short
+`[sb_movie_infobox_from_imdb id="tt0910970" detailType="short"]` for short plot (default)
+`[sb_movie_infobox_from_imdb id="tt0910970" detailType="full"]` for full plot
 
-= Howto change box theme? =
-
-To change box theme login as admin
-
-1. goto `Settings->IMDB infobox Settings`.
-2. Select background and text color
-3. Click On `Save Changes`
-
-= How to set cache age? =
-
-To change cache age login as admin
-
-1. goto `Settings->IMDB infobox Settings`.
-2. Enter cache age in seconds or -1 for never expire
-3. Click On `Save Changes`
 
 == Changelog ==
 
-= 1.2 =
-* Replaced all php stort open tags to with long tags
-* Remove all readonly attribute from input fields
-
-= 1.1 =
-* Moved cache directory to uploads folder
-* Using CURL instead of file_get_contents
-* Added Border radius for imdb info box
-
-= 1.0 =
-* Initial release
+= 0.1 =
+* not finished

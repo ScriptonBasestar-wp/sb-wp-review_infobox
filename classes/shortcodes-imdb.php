@@ -8,18 +8,16 @@
 
 
 function fn_sb_movie_infobox_from_imdb( $atts ) {
-    extract( shortcode_atts( array('movieid' => 0, 'detailType' => 'simple' ), $atts, 'cwktag' ) );
+    extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
 
-//    echo($movieid);
-    if( !$movieid ) {
-        return "Movie id null or unknown error : " . $movieid;
+    if( !$id ) {
+        return "Movie id null or unknown error : " . $id;
     }
-
     if( !$detailType) {
-        $detailType = 'simple';
+        $detailType = 'short';
     }
 
-    $json = fn_sb_movie_infobox_cache($movieid);
+    $json = fn_sb_movie_infobox_cache($id, $detailType);
 
     $out =
 "
@@ -43,7 +41,7 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
     return $out;
 }
 
-function fn_sb_movie_infobox_cache($id)
+function fn_sb_movie_infobox_cache($id, $detailType)
 {
 //    $cacheage = get_option('imdbcacheage', -1);
     $cacheage = -1;
@@ -56,7 +54,7 @@ function fn_sb_movie_infobox_cache($id)
         !file_exists($jsonCacheDir) || ($cacheage > -1 && filemtime($jsonCacheDir) < (time() - $cacheage))
     ) {
         //$url = "http://www.omdbapi.com/?i=".$movieid."&plot=short&r=json";
-        $url = "http://www.omdbapi.com/?i={$id}&plot=short&r=json";
+        $url = "http://www.omdbapi.com/?i={$id}&plot={$detailType}&r=json";
         $http_args = array(
             'user-agent' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
         );
