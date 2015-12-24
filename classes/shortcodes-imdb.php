@@ -43,9 +43,9 @@ function fn_sb_movie_infobox_cache($id, $detailType)
 {
 //    $cacheage = get_option('imdbcacheage', -1);
     $cacheage = -1;
-    $imageCacheDir = SB_IMAGE_CACHE_DIR . "/" . $id . ".jpg";
-    $imageCacheUrl = SB_IMAGE_CACHE_URL . "/" . $id . ".jpg";
-    $jsonCacheDir = SB_IMAGE_CACHE_DIR . "/" . $id . ".json";
+    $imageCacheDir = SB_CACHE_DIR . "/" . $id . ".jpg";
+    $imageCacheUrl = SB_CACHE_URL . "/" . $id . ".jpg";
+    $jsonCacheDir = SB_CACHE_DIR . "/" . $id . ".json";
 
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
