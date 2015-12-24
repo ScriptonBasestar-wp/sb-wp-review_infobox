@@ -17,7 +17,7 @@ define('SB_MOVIE_INFOBOX_ROOT_URL', WP_PLUGIN_URL . '/' . plugin_basename(dirnam
 define('SB_MOVIE_INFOBOX_ROOT_PATH', str_replace("\\", "/", WP_PLUGIN_DIR . '/' . plugin_basename(dirname(__FILE__)) . '/'));
 
 $upload_dir = wp_upload_dir();
-define('SB_IMAGE_CACHE', $upload_dir['basedir'] . "/sb_cache");
+define('SB_IMAGE_CACHE_DIR', $upload_dir['basedir'] . "/sb_cache");
 define('SB_IMAGE_CACHE_URL', $upload_dir['baseurl'] . "/sb_cache");
 
 //include("classes/filter-imdb-button.php");

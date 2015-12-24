@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .shortcodes-imdb-infobox-wrapper {
+            display: inline-block;
+            /*width: 100%;*/
+            width: 600px;
+            border: solid black 1px;
+            padding: 5px;
+        }
+
+        .shortcodes-imdb-infobox-title {
+            display: block;
+            border: solid black 1px;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+
+        .shortcodes-imdb-infobox-poster {
+            width: 200px;
+            height: 300px;
+
+            float: left;
+
+            /*background: red;*/
+            /*border: solid black 1px;*/
+        }
+
+        .shortcodes-imdb-infobox-description-wrapper {
+            width: auto;
+            height: 300px;
+
+            /*background: blue;*/
+            /*border: solid black 1px;*/
+        }
+
+        .shortcodes-imdb-infobox-description-wrapper div {
+            /*display: inline-block;*/
+            width: inherit;
+            /*float: left;*/
+
+            margin: 2px;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="shortcodes-imdb-infobox-wrapper">
+    <span class="shortcodes-imdb-infobox-title">제목 : {{Title}}</span>
+
+    <div class="shortcodes-imdb-infobox-poster"><img src="{{Poster}}"/></div>
+
+    <div class="shortcodes-imdb-infobox-description-wrapper">
+        <div>제작년도 : {{Year}}</div>
+        <div>개봉일 : {{Released}}</div>
+        <div>상영시간 : {{Runtime}}</div>
+        <div>장르 : {{Genre}}</div>
+        <div>감독 : {{Director}}</div>
+        <div>언어 : {{Language}}</div>
+        <div>국가 : {{Country}}</div>
+    </div>
+</div>
+
+</body>
+</html>
