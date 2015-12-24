@@ -23,4 +23,34 @@ define('SB_IMAGE_CACHE_URL', $upload_dir['baseurl'] . "/sb_cache");
 //include("classes/filter-imdb-button.php");
 include("classes/shortcodes-imdb.php");
 
+
+
+function sb_movie_infobox_activate()
+{
+//    add_option('imdbcacheage', -1);
+//    add_option('imdbheadbg', 'FFCC00');
+//    add_option('imdbheadfg', 'FFFFFF');
+//    add_option('imdbbodybg', 'F4F3D9');
+//    add_option('imdbbodyfg', '333333');
+//    add_option('imdbcorner', '5');
+    if (!is_dir(IMDBCACHE)) {
+        if (!wp_mkdir_p(IMDBCACHE)) {
+            die("Unable to create cache directory in uploads folder. Please make sure uploads directory is writable");
+        }
+    }
+}
+
+function sb_movie_infobox_deactivate()
+{
+//    delete_option('imdbcacheage');
+//    delete_option('imdbheadbg');
+//    delete_option('imdbheadfg');
+//    delete_option('imdbbodybg');
+//    delete_option('imdbbodyfg');
+//    delete_option('imdbcorner');
+}
+
+register_activation_hook(__FILE__, 'sb_movie_infobox_activate');
+register_deactivation_hook(__FILE__, 'sb_movie_infobox_deactivate');
+
 ?>
