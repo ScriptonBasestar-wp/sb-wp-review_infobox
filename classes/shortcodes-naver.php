@@ -1,14 +1,17 @@
 <?php
 /**
- * http://www.omdbapi.com/?i=tt2446980&plot=short&r=json
- * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
+ * http://movie.naver.com/movie/bi/mi/basic.nhn?code=52747
+ *
  */
 // Shortcode Example
-// [sb_movie_infobox_from_imdb id="tt2446980"]
+// [sb_movie_infobox_from_naver id=tt2446980]
 
+class ShortCodeNaver(){
 
-function fn_sb_movie_infobox_from_imdb( $atts ) {
-    extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
+}
+
+function fn_sb_movie_infobox_from_naver( $atts ) {
+    extract(shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ));
 
     if( !$id ) {
         return "Movie id null or unknown error : " . $id;
@@ -43,22 +46,36 @@ function fn_sb_movie_infobox_cache($id, $detailType)
 {
 //    $cacheage = get_option('imdbcacheage', -1);
     $cacheage = -1;
-    $imageCacheDir = "{SB_CACHE_DIR}/imdb/{$id}.jpg";
-    $imageCacheUrl = "{SB_CACHE_URL}/imdb/{$id}.jpg";
-    $jsonCacheDir = "{SB_CACHE_DIR}/imdb/{$id}.json";
+    $imageCacheDir = "{SB_CACHE_DIR}/naver/{$id}.jpg";
+    $imageCacheUrl = "{SB_CACHE_URL}/naver/{$id}.jpg";
+    $jsonCacheDir = "{SB_CACHE_DIR}/naver/{$id}.json";
 
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
         !file_exists($jsonCacheDir) || ($cacheage > -1 && filemtime($jsonCacheDir) < (time() - $cacheage))
     ) {
         //$url = "http://www.omdbapi.com/?i=".$movieid."&plot=short&r=json";
-        $url = "http://www.omdbapi.com/?i={$id}&plot={$detailType}&r=json";
+        $url = "http://movie.naver.com/movie/bi/mi/basic.nhn?code={$id}";
         $http_args = array(
             'user-agent' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
         );
         $rawResponse = wp_remote_request($url, $http_args);
         $rawResponse = $rawResponse['body'];
 //        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
+
+        $current_charset = get_bloginfo('charset');
+        $phpquery = phpQuery::newDocumentHTML($rawResponse, $current_charset);
+        phpQuery::selectDocument($phpquery);
+
+        $titleElement = pq('title');
+        $title = $titleElement->html();
+
+        $html_content = htmlentities( $title )  .  ' <em>(Stock Info Provided by CWK)</em>';
+        $html_content .= pq("#content > div.article > div.mv_info_area > div.poster")->html();
+
+        echo("<br/>");
+        echo($html_content);
+        echo("<br/>");
 
         $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
         $json = json_decode($rawResponse, true);
@@ -89,4 +106,4 @@ function file_get_contents_curl($url)
     return $data;
 }
 
-add_shortcode( 'sb_movie_infobox_from_imdb', 'fn_sb_movie_infobox_from_imdb');
+add_shortcode( 'sb_movie_infobox_from_naver', 'fn_sb_movie_infobox_from_naver');

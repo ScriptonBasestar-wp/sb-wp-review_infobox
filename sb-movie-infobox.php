@@ -22,6 +22,11 @@ define('SB_CACHE_URL', $upload_dir['baseurl'] . "/sb_cache");
 
 //include("classes/filter-imdb-button.php");
 include("classes/shortcodes-imdb.php");
+include("classes/shortcodes-naver.php");
+wp_enqueue_style( 'shortcodes-movie', plugins_url( '../css/shortcodes-movie.css', __FILE__ ));
+//wp_enqueue_style( 'stylesheet', plugins_url( 'shortcodes-imdb.css', __FILE__ ));
+
+
 
 
 
