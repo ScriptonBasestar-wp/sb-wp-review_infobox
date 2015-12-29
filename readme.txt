@@ -9,7 +9,7 @@ Stable tag: 0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Display movie information from IMDB in wordpress post.
+Display movie information from IMDB(or ...) in wordpress post.
 
 == Description ==
 This plugin helps to add movie information (from IMDB) in wordpress post using shortcode [sb_movie_infobox_from_imdb id="tt2446980"].

@@ -3,10 +3,12 @@
  * http://movie.naver.com/movie/bi/mi/basic.nhn?code=52747
  *
  */
+
+namespace sbReviewInfobox;
 // Shortcode Example
 // [sb_movie_infobox_from_naver id=tt2446980]
 
-class ShortCodeNaver(){
+class ShortCodeNaver {
 
 }
 

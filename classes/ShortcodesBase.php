@@ -4,7 +4,7 @@
  * @since 2015-12-29 01:13
  */
 
-namespace sbMovieInfobox;
+namespace sbReviewInfobox;
 
 
 class ShortcodesBase

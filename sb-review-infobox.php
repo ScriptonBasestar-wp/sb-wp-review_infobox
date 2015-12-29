@@ -1,17 +1,19 @@
 <?php
 /*
-* Plugin Name: SB-Movie-Infobox
-* Plugin URI: http://scriptonbasestar.com/wp/plugin
-* Description: ScriptonBasestar Inc. wordpress movie plugin. usage : [sb_movie_infobox_from_imdb id="imdb id"]
+* Plugin Name: SB-Review-Infobox
+* Plugin URI: http://wp.scriptonbasestar.com/plugin
+* Description: ScriptonBasestar Inc. wordpress review plugin. usage : [sb_review_infobox_from_imdb id="imdb id"]
 * Version: 0.1
-* Text Domain: sb-movie-infobox
+* Text Domain: sb-review-infobox
 * Domain Path: /languages/
 * Author: archmagece
 * Author URI: http://scriptonbasestar.com
 * License: GPLv3
 * License URI: http://www.gnu.org/licenses/gpl-3.0
-* Slug: sb-movie-infobox
+* Slug: sb-review-infobox
 */
+
+namespace sbReviewInfobox;
 
 define('SB_MOVIE_INFOBOX_ROOT_URL', WP_PLUGIN_URL . '/' . plugin_basename(dirname(__FILE__)) . '/');
 define('SB_MOVIE_INFOBOX_ROOT_PATH', str_replace("\\", "/", WP_PLUGIN_DIR . '/' . plugin_basename(dirname(__FILE__)) . '/'));
@@ -53,6 +55,11 @@ function sb_movie_infobox_deactivate()
 //    delete_option('imdbbodybg');
 //    delete_option('imdbbodyfg');
 //    delete_option('imdbcorner');
+    if (is_dir(SB_CACHE_DIR)) {
+        if (wp_remomkdir_p(SB_CACHE_DIR)) {
+            die("Unable to create cache directory in uploads folder. Please make sure uploads directory is writable");
+        }
+    }
 }
 
 register_activation_hook(__FILE__, 'sb_movie_infobox_activate');
