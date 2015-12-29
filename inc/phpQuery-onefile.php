@@ -216,12 +216,12 @@ class DOMDocumentWrapper {
 				case 'text/html':
 					phpQuery::debug("Loading HTML, content type '{$this->contentType}'");
 					$loaded = $this->loadMarkupHTML($markup, $charset);
-					break;
+				break;
 				case 'text/xml':
 				case 'application/xhtml+xml':
 					phpQuery::debug("Loading XML, content type '{$this->contentType}'");
 					$loaded = $this->loadMarkupXML($markup, $charset);
-					break;
+				break;
 				default:
 					// for feeds or anything that sometimes doesn't use text/xml
 					if (strpos('xml', $this->contentType) !== false) {
@@ -280,7 +280,7 @@ class DOMDocumentWrapper {
 		// @see http://www.w3.org/International/O-HTTP-charset
 		if (! $documentCharset) {
 			$documentCharset = 'ISO-8859-1';
-			$addDocumentCharset = true;
+			$addDocumentCharset = true;	
 		}
 		// Should be careful here, still need 'magic encoding detection' since lots of pages have other 'default encoding'
 		// Worse, some pages can have mixed encodings... we'll try not to worry about that
@@ -384,14 +384,14 @@ class DOMDocumentWrapper {
 		} else {
 			// FIXME ???
 			if ($isContentTypeXHTML && ! $isMarkupXHTML)
-				if (! $documentCharset) {
-					phpQuery::debug("Full markup load (XML), appending charset '$charset'");
-					$markup = $this->charsetAppendToXML($markup, $charset);
-				}
+			if (! $documentCharset) {
+				phpQuery::debug("Full markup load (XML), appending charset '$charset'");
+				$markup = $this->charsetAppendToXML($markup, $charset);
+			}
 			// see http://pl2.php.net/manual/en/book.dom.php#78929
 			// LIBXML_DTDLOAD (>= PHP 5.1)
 			// does XML ctalogues works with LIBXML_NONET
-			//		$this->document->resolveExternals = true;
+	//		$this->document->resolveExternals = true;
 			// TODO test LIBXML_COMPACT for performance improvement
 			// create document
 			$this->documentCreate($charset);
@@ -687,8 +687,8 @@ class DOMDocumentWrapper {
 				$markup = substr($markup, strpos($markup, '<fake>')+6);
 			}
 		} else {
-			$markup = substr($markup, strpos($markup, '<body>')+6);
-			$markup = substr($markup, 0, strrpos($markup, '</body>'));
+				$markup = substr($markup, strpos($markup, '<body>')+6);
+				$markup = substr($markup, 0, strrpos($markup, '</body>'));
 		}
 		$fragment->isDocumentFragment = $tmp;
 		if (phpQuery::$debug)
@@ -711,11 +711,11 @@ class DOMDocumentWrapper {
 			if ($this->isDocumentFragment && ! $innerMarkup)
 				foreach($nodes as $i => $node)
 					if ($node->isSameNode($this->root)) {
-						//	var_dump($node);
+					//	var_dump($node);
 						$nodes = array_slice($nodes, 0, $i)
 							+ phpQuery::DOMNodeListToArray($node->childNodes)
 							+ array_slice($nodes, $i+1);
-					}
+						}
 			if ($this->isXML && ! $innerMarkup) {
 				self::debug("Getting outerXML with charset '{$this->charset}'");
 				// we need outerXML, so we can benefit from
@@ -788,19 +788,19 @@ class DOMDocumentWrapper {
 	 * @link http://php.net/manual/en/domdocument.savehtml.php#81256
 	 */
 	public static function expandEmptyTag($tag, $xml){
-		$indice = 0;
-		while ($indice< strlen($xml)){
-			$pos = strpos($xml, "<$tag ", $indice);
-			if ($pos){
-				$posCierre = strpos($xml, ">", $pos);
-				if ($xml[$posCierre-1] == "/"){
-					$xml = substr_replace($xml, "></$tag>", $posCierre-1, 2);
-				}
-				$indice = $posCierre;
-			}
-			else break;
-		}
-		return $xml;
+        $indice = 0;
+        while ($indice< strlen($xml)){
+            $pos = strpos($xml, "<$tag ", $indice);
+            if ($pos){
+                $posCierre = strpos($xml, ">", $pos);
+                if ($xml[$posCierre-1] == "/"){
+                    $xml = substr_replace($xml, "></$tag>", $posCierre-1, 2);
+                }
+                $indice = $posCierre;
+            }
+            else break;
+        }
+        return $xml;
 	}
 }
 
@@ -952,7 +952,7 @@ abstract class phpQueryEvents {
 	protected static function setNode($documentID, $node) {
 		phpQuery::$documents[$documentID]->eventsNodes[] = $node;
 		return phpQuery::$documents[$documentID]->eventsNodes[
-		count(phpQuery::$documents[$documentID]->eventsNodes)-1
+			count(phpQuery::$documents[$documentID]->eventsNodes)-1
 		];
 	}
 	protected static function issetGlobal($documentID, $type) {
@@ -969,24 +969,24 @@ interface ICallbackNamed {
 }
 /**
  * Callback class introduces currying-like pattern.
- *
+ * 
  * Example:
  * function foo($param1, $param2, $param3) {
  *   var_dump($param1, $param2, $param3);
  * }
- * $fooCurried = new Callback('foo',
- *   'param1 is now statically set',
+ * $fooCurried = new Callback('foo', 
+ *   'param1 is now statically set', 
  *   new CallbackParam, new CallbackParam
  * );
  * phpQuery::callbackRun($fooCurried,
  * 	array('param2 value', 'param3 value'
  * );
- *
- * Callback class is supported in all phpQuery methods which accepts callbacks.
+ * 
+ * Callback class is supported in all phpQuery methods which accepts callbacks. 
  *
  * @link http://code.google.com/p/phpquery/wiki/Callbacks#Param_Structures
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
- *
+ * 
  * @TODO??? return fake forwarding function created via create_function
  * @TODO honor paramStructure
  */
@@ -995,8 +995,8 @@ class Callback
 	public $callback = null;
 	public $params = null;
 	protected $name;
-	public function __construct($callback, $param1 = null, $param2 = null,
-								$param3 = null) {
+	public function __construct($callback, $param1 = null, $param2 = null, 
+			$param3 = null) {
 		$params = func_get_args();
 		$params = array_slice($params, 1);
 		if ($callback instanceof Callback) {
@@ -1024,12 +1024,12 @@ class Callback
 }
 /**
  * Shorthand for new Callback(create_function(...), ...);
- *
+ * 
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
  */
 class CallbackBody extends Callback {
-	public function __construct($paramList, $code, $param1 = null, $param2 = null,
-								$param3 = null) {
+	public function __construct($paramList, $code, $param1 = null, $param2 = null, 
+			$param3 = null) {
 		$params = func_get_args();
 		$params = array_slice($params, 2);
 		$this->callback = create_function($paramList, $code);
@@ -1038,7 +1038,7 @@ class CallbackBody extends Callback {
 }
 /**
  * Callback type which on execution returns reference passed during creation.
- *
+ * 
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
  */
 class CallbackReturnReference extends Callback
@@ -1060,7 +1060,7 @@ class CallbackReturnReference extends Callback
 }
 /**
  * Callback type which on execution returns value passed during creation.
- *
+ * 
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
  */
 class CallbackReturnValue extends Callback
@@ -1087,7 +1087,7 @@ class CallbackReturnValue extends Callback
 }
 /**
  * CallbackParameterToReference can be used when we don't really want a callback,
- * only parameter passed to it. CallbackParameterToReference takes first
+ * only parameter passed to it. CallbackParameterToReference takes first 
  * parameter's value and passes it to reference.
  *
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
@@ -1095,7 +1095,7 @@ class CallbackReturnValue extends Callback
 class CallbackParameterToReference extends Callback {
 	/**
 	 * @param $reference
-	 * @TODO implement $paramIndex;
+	 * @TODO implement $paramIndex; 
 	 * param index choose which callback param will be passed to reference
 	 */
 	public function __construct(&$reference){
@@ -1230,7 +1230,7 @@ class phpQueryObject
 			// FIXME doesnt work at all ?
 			case 'length':
 				return $this->size();
-				break;
+			break;
 			default:
 				return $this->$attr;
 		}
@@ -1252,17 +1252,17 @@ class phpQueryObject
 		return $this->documentFragment;
 	}
 	/**
-	 * @access private
-	 * @TODO documentWrapper
+   * @access private
+   * @TODO documentWrapper
 	 */
 	protected function isRoot( $node) {
 //		return $node instanceof DOMDOCUMENT || $node->tagName == 'html';
 		return $node instanceof DOMDOCUMENT
-		|| ($node instanceof DOMELEMENT && $node->tagName == 'html')
-		|| $this->root->isSameNode($node);
+			|| ($node instanceof DOMELEMENT && $node->tagName == 'html')
+			|| $this->root->isSameNode($node);
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	protected function stackIsRoot() {
 		return $this->size() == 1 && $this->isRoot($this->elements[0]);
@@ -1462,7 +1462,7 @@ class phpQueryObject
 					$i++;
 				}
 				$return[] = $tmp;
-				// IDs
+			// IDs
 			} else if ( $c == '#') {
 				$i++;
 				while( isset($query[$i]) && ($this->isChar($query[$i]) || $query[$i] == '-')) {
@@ -1470,33 +1470,33 @@ class phpQueryObject
 					$i++;
 				}
 				$return[] = '#'.$tmp;
-				// SPECIAL CHARS
+			// SPECIAL CHARS
 			} else if (in_array($c, $specialChars)) {
 				$return[] = $c;
 				$i++;
-				// MAPPED SPECIAL MULTICHARS
+			// MAPPED SPECIAL MULTICHARS
 //			} else if ( $c.$query[$i+1] == '//') {
 //				$return[] = ' ';
 //				$i = $i+2;
-				// MAPPED SPECIAL CHARS
+			// MAPPED SPECIAL CHARS
 			} else if ( isset($specialCharsMapping[$c])) {
 				$return[] = $specialCharsMapping[$c];
 				$i++;
-				// COMMA
+			// COMMA
 			} else if ( $c == ',') {
 				$queries[] = array();
 				$return =& $queries[ count($queries)-1 ];
 				$i++;
 				while( isset($query[$i]) && $query[$i] == ' ')
 					$i++;
-				// CLASSES
+			// CLASSES
 			} else if ($c == '.') {
 				while( isset($query[$i]) && ($this->isChar($query[$i]) || in_array($query[$i], $classChars))) {
 					$tmp .= $query[$i];
 					$i++;
 				}
 				$return[] = $tmp;
-				// ~ General Sibling Selector
+			// ~ General Sibling Selector
 			} else if ($c == '~') {
 				$spaceAllowed = true;
 				$tmp .= $query[$i++];
@@ -1512,7 +1512,7 @@ class phpQueryObject
 					$i++;
 				}
 				$return[] = $tmp;
-				// + Adjacent sibling selectors
+			// + Adjacent sibling selectors
 			} else if ($c == '+') {
 				$spaceAllowed = true;
 				$tmp .= $query[$i++];
@@ -1528,7 +1528,7 @@ class phpQueryObject
 					$i++;
 				}
 				$return[] = $tmp;
-				// ATTRS
+			// ATTRS
 			} else if ($c == '[') {
 				$stack = 1;
 				$tmp .= $c;
@@ -1544,7 +1544,7 @@ class phpQueryObject
 				}
 				$return[] = $tmp;
 				$i++;
-				// PSEUDO CLASSES
+			// PSEUDO CLASSES
 			} else if ($c == ':') {
 				$stack = 1;
 				$tmp .= $query[$i++];
@@ -1715,10 +1715,10 @@ class phpQueryObject
 			);
 			if (! $diff )
 				return true;
-			// single-class
+		// single-class
 		} else {
 			return in_array(
-			// strip leading dot from class name
+				// strip leading dot from class name
 				substr($class, 1),
 				// get classes for element as array
 				explode(' ', $node->getAttribute('class') )
@@ -1848,12 +1848,12 @@ class phpQueryObject
 					} else {
 						$XQuery .= $s;
 					}
-					// ID
+				// ID
 				} else if ($s[0] == '#') {
 					if ($delimiterBefore)
 						$XQuery .= '*';
 					$XQuery .= "[@id='".substr($s, 1)."']";
-					// ATTRIBUTES
+				// ATTRIBUTES
 				} else if ($s[0] == '[') {
 					if ($delimiterBefore)
 						$XQuery .= '*';
@@ -1873,7 +1873,7 @@ class phpQueryObject
 						} else {
 							$XQuery .= "[@{$attr}='{$value}']";
 						}
-						// attr without specified value
+					// attr without specified value
 					} else {
 						$XQuery .= "[@{$attr}]";
 					}
@@ -1883,7 +1883,7 @@ class phpQueryObject
 						if (! $this->length())
 							break;
 					}
-					// CLASSES
+				// CLASSES
 				} else if ($s[0] == '.') {
 					// TODO use return $this->find("./self::*[contains(concat(\" \",@class,\" \"), \" $class \")]");
 					// thx wizDom ;)
@@ -1894,7 +1894,7 @@ class phpQueryObject
 					$XQuery = '';
 					if (! $this->length() )
 						break;
-					// ~ General Sibling Selector
+				// ~ General Sibling Selector
 				} else if ($s[0] == '~') {
 					$this->runQuery($XQuery);
 					$XQuery = '';
@@ -1904,7 +1904,7 @@ class phpQueryObject
 						)->elements;
 					if (! $this->length() )
 						break;
-					// + Adjacent sibling selectors
+				// + Adjacent sibling selectors
 				} else if ($s[0] == '+') {
 					// TODO /following-sibling::
 					$this->runQuery($XQuery);
@@ -1922,7 +1922,7 @@ class phpQueryObject
 					}
 					if (! $this->length() )
 						break;
-					// PSEUDO CLASSES
+				// PSEUDO CLASSES
 				} else if ($s[0] == ':') {
 					// TODO optimization for :first :last
 					if ($XQuery) {
@@ -1934,15 +1934,15 @@ class phpQueryObject
 					$this->pseudoClasses($s);
 					if (! $this->length())
 						break;
-					// DIRECT DESCENDANDS
+				// DIRECT DESCENDANDS
 				} else if ($s == '>') {
 					$XQuery .= '/';
 					$delimiterBefore = 2;
-					// ALL DESCENDANDS
+				// ALL DESCENDANDS
 				} else if ($s == ' ') {
 					$XQuery .= '//';
 					$delimiterBefore = 2;
-					// ERRORS
+				// ERRORS
 				} else {
 					phpQuery::debug("Unrecognized token '$s'");
 				}
@@ -2058,7 +2058,7 @@ class phpQueryObject
 						"button[type=$class]", new CallbackParam()
 					)
 				);
-				break;
+			break;
 //				$stack = array();
 //				foreach($this->elements as $node)
 //					if ($node->is('input[type=submit]') || $node->is('button[type=submit]'))
@@ -2069,7 +2069,7 @@ class phpQueryObject
 					array($this, 'is'),
 					'input', new CallbackParam()
 				)->elements;
-				break;
+			break;
 			case 'password':
 			case 'checkbox':
 			case 'radio':
@@ -2080,21 +2080,21 @@ class phpQueryObject
 					array($this, 'is'),
 					"input[type=$class]", new CallbackParam()
 				)->elements;
-				break;
+			break;
 			case 'parent':
 				$this->elements = $this->map(
 					create_function('$node', '
 						return $node instanceof DOMELEMENT && $node->childNodes->length
 							? $node : null;')
 				)->elements;
-				break;
+			break;
 			case 'empty':
 				$this->elements = $this->map(
 					create_function('$node', '
 						return $node instanceof DOMELEMENT && $node->childNodes->length
 							? null : $node;')
 				)->elements;
-				break;
+			break;
 			case 'disabled':
 			case 'selected':
 			case 'checked':
@@ -2102,13 +2102,13 @@ class phpQueryObject
 					array($this, 'is'),
 					"[$class]", new CallbackParam()
 				)->elements;
-				break;
+			break;
 			case 'enabled':
 				$this->elements = $this->map(
 					create_function('$node', '
 						return pq($node)->not(":disabled") ? $node : null;')
 				)->elements;
-				break;
+			break;
 			case 'header':
 				$this->elements = $this->map(
 					create_function('$node',
@@ -2131,28 +2131,28 @@ class phpQueryObject
 //							? $node
 //							: null;')
 //				)->elements;
-				break;
+			break;
 			case 'only-child':
 				$this->elements = $this->map(
 					create_function('$node',
 						'return pq($node)->siblings()->size() == 0 ? $node : null;')
 				)->elements;
-				break;
+			break;
 			case 'first-child':
 				$this->elements = $this->map(
 					create_function('$node', 'return pq($node)->prevAll()->size() == 0 ? $node : null;')
 				)->elements;
-				break;
+			break;
 			case 'last-child':
 				$this->elements = $this->map(
 					create_function('$node', 'return pq($node)->nextAll()->size() == 0 ? $node : null;')
 				)->elements;
-				break;
+			break;
 			case 'nth-child':
 				$param = trim($args, "\"'");
 				if (! $param)
 					break;
-				// nth-child(n+b) to nth-child(1n+b)
+					// nth-child(n+b) to nth-child(1n+b)
 				if ($param{0} == 'n')
 					$param = '1'.$param;
 				// :nth-child(index/even/odd/equation)
@@ -2222,7 +2222,7 @@ class phpQueryObject
 						new CallbackParam(), $param
 					);
 				$this->elements = $mapped->elements;
-				break;
+			break;
 			default:
 				$this->debug("Unknown pseudoclass '{$class}', skipping...");
 		}
@@ -2327,11 +2327,11 @@ class phpQueryObject
 						if ( $s[0] == '#') {
 							if ( $node->getAttribute('id') != substr($s, 1) )
 								$break = true;
-							// CLASSES
+						// CLASSES
 						} else if ( $s[0] == '.') {
 							if (! $this->matchClasses( $s, $node ) )
 								$break = true;
-							// ATTRS
+						// ATTRS
 						} else if ( $s[0] == '[') {
 							// strip side brackets
 							$attr = trim($s, '[]');
@@ -2370,10 +2370,10 @@ class phpQueryObject
 									$break = true;
 							} else if (! $node->hasAttribute($attr))
 								$break = true;
-							// PSEUDO CLASSES
+						// PSEUDO CLASSES
 						} else if ( $s[0] == ':') {
 							// skip
-							// TAG
+						// TAG
 						} else if (trim($s)) {
 							if ($s != '*') {
 								// TODO namespaces
@@ -2383,7 +2383,7 @@ class phpQueryObject
 								} else if ($s == 'html' && ! $this->isRoot($node))
 									$break = true;
 							}
-							// AVOID NON-SIMPLE SELECTORS
+						// AVOID NON-SIMPLE SELECTORS
 						} else if (in_array($s, $notSimpleSelector)) {
 							$break = true;
 							$this->debug(array('Skipping non simple selector', $selector));
@@ -2624,12 +2624,12 @@ class phpQueryObject
 			->map(array($this, '___wrapAllCallback'))
 			->append($this);
 	}
-	/**
-	 *
+  /**
+   *
 	 * @param $node
 	 * @return unknown_type
 	 * @access private
-	 */
+   */
 	public function ___wrapAllCallback($node) {
 		$deepest = $node;
 		while($deepest->firstChild && $deepest->firstChild instanceof DOMELEMENT)
@@ -2646,10 +2646,10 @@ class phpQueryObject
 	public function wrapAllPHP($codeBefore, $codeAfter) {
 		return $this
 			->slice(0, 1)
-			->beforePHP($codeBefore)
+				->beforePHP($codeBefore)
 			->end()
 			->slice(-1)
-			->afterPHP($codeAfter)
+				->afterPHP($codeAfter)
 			->end();
 	}
 	/**
@@ -2994,7 +2994,7 @@ class phpQueryObject
 	}
 	/**
 	 * Enter description here...
-	 *
+	 * 
 	 * @param $code
 	 * @return unknown_type
 	 */
@@ -3005,7 +3005,7 @@ class phpQueryObject
 	}
 	/**
 	 * Enter description here...
-	 *
+	 * 
 	 * @param $code
 	 * @return unknown_type
 	 */
@@ -3168,7 +3168,7 @@ class phpQueryObject
 					if (phpQuery::isMarkup($target)) {
 						// $target is new markup, import it
 						$insertTo = $this->documentWrapper->import($target);
-						// insert into selected element
+					// insert into selected element
 					} else {
 						// $tagret is a selector
 						$thisStack = $this->elements;
@@ -3213,7 +3213,7 @@ class phpQueryObject
 							? $loop
 							: $this->documentWrapper->import($loop);
 					}
-					// DOMNODE
+				// DOMNODE
 				} elseif ($target instanceof DOMNODE) {
 					// import node if needed
 //					if ( $target->ownerDocument != $this->DOM )
@@ -3680,7 +3680,7 @@ class phpQueryObject
 				in_array($node->getAttribute('type'),
 					array('text', 'password', 'hidden'))
 				|| !$node->getAttribute('type')
-			);
+				 );
 		$isRadio = $node->tagName == 'input'
 			&& $node->getAttribute('type') == 'radio';
 		$isCheckbox = $node->tagName == 'input'
@@ -3812,22 +3812,22 @@ class phpQueryObject
 	public function val($val = null) {
 		if (! isset($val)) {
 			if ($this->eq(0)->is('select')) {
-				$selected = $this->eq(0)->find('option[selected=selected]');
-				if ($selected->is('[value]'))
-					return $selected->attr('value');
-				else
-					return $selected->text();
+					$selected = $this->eq(0)->find('option[selected=selected]');
+					if ($selected->is('[value]'))
+						return $selected->attr('value');
+					else
+						return $selected->text();
 			} else if ($this->eq(0)->is('textarea'))
-				return $this->eq(0)->markup();
-			else
-				return $this->eq(0)->attr('value');
+					return $this->eq(0)->markup();
+				else
+					return $this->eq(0)->attr('value');
 		} else {
 			$_val = null;
 			foreach($this->stack(1) as $node) {
 				$node = pq($node, $this->getDocumentID());
 				if (is_array($val) && in_array($node->attr('type'), array('checkbox', 'radio'))) {
 					$isChecked = in_array($node->attr('value'), $val)
-						|| in_array($node->attr('name'), $val);
+							|| in_array($node->attr('name'), $val);
 					if ($isChecked)
 						$node->attr('checked', 'checked');
 					else
@@ -3904,11 +3904,11 @@ class phpQueryObject
 	 */
 	public function addClassPHP( $className) {
 		foreach($this->stack(1) as $node) {
-			$classes = $node->getAttribute('class');
-			$newValue = $classes
-				? $classes.' <'.'?php '.$className.' ?'.'>'
-				: '<'.'?php '.$className.' ?'.'>';
-			$node->setAttribute('class', $newValue);
+				$classes = $node->getAttribute('class');
+				$newValue = $classes
+					? $classes.' <'.'?php '.$className.' ?'.'>'
+					: '<'.'?php '.$className.' ?'.'>';
+				$node->setAttribute('class', $newValue);
 		}
 		return $this;
 	}
@@ -4034,7 +4034,7 @@ class phpQueryObject
 	}
 	/**
 	 * Enter description here...
-	 *
+	 * 
 	 * @param <type> $key
 	 * @param <type> $value
 	 */
@@ -4051,7 +4051,7 @@ class phpQueryObject
 	}
 	/**
 	 * Enter description here...
-	 *
+	 * 
 	 * @param <type> $key
 	 */
 	public function removeData($key) {
@@ -4063,7 +4063,7 @@ class phpQueryObject
 
 	// ITERATOR INTERFACE
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function rewind(){
 		$this->debug('iterating foreach');
@@ -4078,13 +4078,13 @@ class phpQueryObject
 		$this->current = 0;
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function current(){
 		return $this->elementsInterator[ $this->current ];
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function key(){
 		return $this->current;
@@ -4115,7 +4115,7 @@ class phpQueryObject
 		}
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function valid(){
 		return $this->valid;
@@ -4123,26 +4123,26 @@ class phpQueryObject
 	// ITERATOR INTERFACE END
 	// ARRAYACCESS INTERFACE
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function offsetExists($offset) {
 		return $this->find($offset)->size() > 0;
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function offsetGet($offset) {
 		return $this->find($offset);
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function offsetSet($offset, $value) {
 //		$this->find($offset)->replaceWith($value);
 		$this->find($offset)->html($value);
 	}
 	/**
-	 * @access private
+   * @access private
 	 */
 	public function offsetUnset($offset) {
 		// empty
@@ -4392,8 +4392,8 @@ if (!function_exists('mb_substr_count'))
  */
 abstract class phpQuery {
 	/**
-	 * XXX: Workaround for mbstring problems
-	 *
+	 * XXX: Workaround for mbstring problems 
+	 * 
 	 * @var bool
 	 */
 	public static $mbstringSupport = true;
@@ -4497,7 +4497,7 @@ abstract class phpQuery {
 	 * @param string|phpQueryObject|DOMNode	$context	DOM ID from $pq->getDocumentID(), phpQuery object (determines also query root) or DOMNode (determines also query root)
 	 *
 	 * @return phpQueryObject|QueryTemplatesSource|QueryTemplatesParse|QueryTemplatesSourceQuery|QueryTemplatesPhpQuery|false
-	 * phpQuery object or false in case of error.
+   * phpQuery object or false in case of error.
 	 */
 	public static function pq($arg1, $context = null) {
 		if ($arg1 instanceof DOMNODE && ! isset($context)) {
@@ -4708,8 +4708,8 @@ abstract class phpQuery {
 	}
 	public static function _phpToMarkupCallback($php, $charset = 'utf-8') {
 		return $m[1].$m[2]
-		.htmlspecialchars("<"."?php".$m[4]."?".">", ENT_QUOTES|ENT_NOQUOTES, $charset)
-		.$m[5].$m[2];
+			.htmlspecialchars("<"."?php".$m[4]."?".">", ENT_QUOTES|ENT_NOQUOTES, $charset)
+			.$m[5].$m[2];
 	}
 	public static function _markupToPHPCallback($m) {
 		return "<"."?php ".htmlspecialchars_decode($m[1])." ?".">";
@@ -4926,7 +4926,7 @@ abstract class phpQuery {
 			$realClass = 'phpQueryPlugin_'.$class;
 			$vars = get_class_vars($realClass);
 			$loop = isset($vars['phpQueryMethods'])
-			&& ! is_null($vars['phpQueryMethods'])
+				&& ! is_null($vars['phpQueryMethods'])
 				? $vars['phpQueryMethods']
 				: get_class_methods($realClass);
 			foreach($loop as $method) {
@@ -4948,7 +4948,7 @@ abstract class phpQuery {
 			$realClass = 'phpQueryObjectPlugin_'.$class;
 			$vars = get_class_vars($realClass);
 			$loop = isset($vars['phpQueryMethods'])
-			&& ! is_null($vars['phpQueryMethods'])
+				&& ! is_null($vars['phpQueryMethods'])
 				? $vars['phpQueryMethods']
 				: get_class_methods($realClass);
 			foreach($loop as $method) {
@@ -5113,12 +5113,12 @@ abstract class phpQuery {
 		$client->setHeaders(array(
 //			'content-type' => $options['contentType'],
 			'User-Agent' => 'Mozilla/5.0 (X11; U; Linux x86; en-US; rv:1.9.0.5) Gecko'
-				.'/2008122010 Firefox/3.0.5',
-			// TODO custom charset
+				 .'/2008122010 Firefox/3.0.5',
+	 		// TODO custom charset
 			'Accept-Charset' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
 // 	 		'Connection' => 'keep-alive',
 // 			'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-			'Accept-Language' => 'en-us,en;q=0.5',
+	 		'Accept-Language' => 'en-us,en;q=0.5',
 		));
 		if ($options['username'])
 			$client->setAuth($options['username'], $options['password']);
@@ -5691,8 +5691,8 @@ function pq($arg1, $context = null) {
 // add plugins dir and Zend framework to include path
 set_include_path(
 	get_include_path()
-	.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/'
-	.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/plugins/'
+		.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/'
+		.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/plugins/'
 );
 // why ? no __call nor __get for statics in php...
 // XXX __callStatic will be available in PHP 5.3
