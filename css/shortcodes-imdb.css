@@ -1,5 +1,5 @@
 
-.shortcodes-imdb-infobox-wrapper {
+.shortcodes-movie-infobox-wrapper {
     display: inline-block;
     width: 100%;
     /*width: 600px;*/
@@ -7,14 +7,14 @@
     padding: 5px;
 }
 
-.shortcodes-imdb-infobox-title {
+.shortcodes-movie-infobox-title {
     display: block;
     border: solid black 1px;
     padding: 5px;
     margin-bottom: 5px;
 }
 
-.shortcodes-imdb-infobox-poster {
+.shortcodes-movie-infobox-poster {
     width: 200px;
     height: 300px;
 
@@ -24,7 +24,7 @@
     /*border: solid black 1px;*/
 }
 
-.shortcodes-imdb-infobox-description-wrapper {
+.shortcodes-movie-infobox-description-wrapper {
     width: auto;
     height: 300px;
 
@@ -32,7 +32,7 @@
     /*border: solid black 1px;*/
 }
 
-.shortcodes-imdb-infobox-description-wrapper div {
+.shortcodes-movie-infobox-description-wrapper div {
     /*display: inline-block;*/
     width: inherit;
     /*float: left;*/

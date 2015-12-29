@@ -4,10 +4,8 @@
  * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
  */
 
-namespace sbReviewInfobox;
 // Shortcode Example
 // [sb_movie_infobox_from_imdb id="tt2446980"]
-
 
 function fn_sb_movie_infobox_from_imdb( $atts ) {
     extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );

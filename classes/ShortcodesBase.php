@@ -4,12 +4,18 @@
  * @since 2015-12-29 01:13
  */
 
-namespace sbReviewInfobox;
 
-
-class ShortcodesBase
+abstract class ShortcodesBase
 {
-	function fn_sb_movie_infobox_from_imdb( $atts ) {
+	private $moduleName;
+	private $cacheage;
+
+	function __construct($moduleName, $cacheage) {
+		$this -> moduleName = $moduleName;
+		$this -> cacheage = $cacheage;
+	}
+
+	public function printInfobox( $atts ) {
 		extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
 
 		if( !$id ) {
@@ -19,14 +25,14 @@ class ShortcodesBase
 			$detailType = 'short';
 		}
 
-		$json = fn_sb_movie_infobox_cache($id, $detailType);
+		$json = cache($id, $detailType);
 
 		$out =
 			"
-<div class='shortcodes-imdb-infobox-wrapper'>
-    <span class='shortcodes-imdb-infobox-title'>제목 : {$json["Title"]}</span>
-    <div class='shortcodes-imdb-infobox-poster' ><img src='{$json["Poster"]}'/></div>
-    <div class='shortcodes-imdb-infobox-description-wrapper'>
+<div class='shortcodes-movie-infobox-wrapper'>
+    <span class='shortcodes-movie-infobox-title'>제목 : {$json["Title"]}</span>
+    <div class='shortcodes-movie-infobox-poster' ><img src='{$json["Poster"]}'/></div>
+    <div class='shortcodes-movie-infobox-description-wrapper'>
         <div>제작년도 : {$json["Year"]}</div>
         <div>개봉일 : {$json["Released"]}</div>
         <div>상영시간 : {$json["Runtime"]}</div>
@@ -41,13 +47,14 @@ class ShortcodesBase
 		return $out;
 	}
 
-	function fn_sb_movie_infobox_cache($id, $detailType)
+	public function cache($id, $detailType)
 	{
-//    $cacheage = get_option('imdbcacheage', -1);
-		$cacheage = -1;
-		$imageCacheDir = "{SB_CACHE_DIR}/imdb/{$id}.jpg";
-		$imageCacheUrl = "{SB_CACHE_URL}/imdb/{$id}.jpg";
-		$jsonCacheDir = "{SB_CACHE_DIR}/imdb/{$id}.json";
+//		$cacheage = get_option('imdbcacheage', -1);
+		$cacheage = $this -> cacheage;
+
+		$imageCacheDir = "{SB_CACHE_DIR}/{$this -> moduleName}/{$id}.jpg";
+		$imageCacheUrl = "{SB_CACHE_URL}/{$this -> moduleName}/{$id}.jpg";
+		$jsonCacheDir = "{SB_CACHE_DIR}/{$this -> moduleName}/{$id}.json";
 
 		if (
 			!file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
@@ -65,7 +72,7 @@ class ShortcodesBase
 			$jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
 			$json = json_decode($rawResponse, true);
 //        echo("jsonResult". $jsonResult . "<br/>");
-			$img = file_get_contents_curl($json['Poster']);
+			$img = loadFileUsingCurl($json['Poster']);
 			$jsonResult = file_put_contents($imageCacheDir, $img);
 			$json['Poster'] = $imageCacheUrl;
 		}else{
@@ -76,10 +83,10 @@ class ShortcodesBase
 		return $json;
 	}
 
-	function file_get_contents_curl($url)
+	public function loadFileUsingCurl($url)
 	{
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_REFERER, 'http://www.imdb.com/');
+//		curl_setopt($ch, CURLOPT_REFERER, 'http://www.imdb.com/');
 		curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -90,7 +97,4 @@ class ShortcodesBase
 		curl_close($ch);
 		return $data;
 	}
-
-add_shortcode( 'sb_movie_infobox_from_imdb', 'fn_sb_movie_infobox_from_imdb');
-
 }
