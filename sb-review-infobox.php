@@ -20,11 +20,12 @@ $upload_dir = wp_upload_dir();
 define('SB_CACHE_DIR', $upload_dir['basedir'] . "/sb_cache");
 define('SB_CACHE_URL', $upload_dir['baseurl'] . "/sb_cache");
 
+include_once("inc/phpQuery-onefile.php");
 //include("classes/filter-imdb-button.php");
 include("classes/shortcodes-imdb.php");
 include("classes/shortcodes-naver.php");
-wp_enqueue_style( 'shortcodes-movie', plugins_url( '../css/shortcodes-movie.css', __FILE__ ));
-//wp_enqueue_style( 'stylesheet', plugins_url( 'shortcodes-imdb.css', __FILE__ ));
+wp_enqueue_style( 'shortcodes-movie', plugins_url( 'css/shortcodes-movie.css', __FILE__ ));
+//wp_enqueue_style( 'stylesheet', plugins_url( 'shortcodes-movie.css', __FILE__ ));
 
 
 
@@ -42,6 +43,9 @@ function sb_movie_infobox_activate()
         if (!wp_mkdir_p(SB_CACHE_DIR)) {
             die("Unable to create cache directory in uploads folder. Please make sure uploads directory is writable");
         }
+        wp_mkdir_p(SB_CACHE_DIR."/imdb");
+        wp_mkdir_p(SB_CACHE_DIR."/naver");
+        wp_mkdir_p(SB_CACHE_DIR."/kobis");
     }
 }
 
@@ -53,11 +57,14 @@ function sb_movie_infobox_deactivate()
 //    delete_option('imdbbodybg');
 //    delete_option('imdbbodyfg');
 //    delete_option('imdbcorner');
-    if (is_dir(SB_CACHE_DIR)) {
-        if (wp_remomkdir_p(SB_CACHE_DIR)) {
-            die("Unable to create cache directory in uploads folder. Please make sure uploads directory is writable");
-        }
-    }
+//    if (is_dir(SB_CACHE_DIR)) {
+//        if (wp_remomkdir_p(SB_CACHE_DIR)) {
+//            die("Unable to create cache directory in uploads folder. Please make sure uploads directory is writable");
+//        }
+//        wp_remomkdir_p(SB_CACHE_DIR."/imdb");
+//        wp_remomkdir_p(SB_CACHE_DIR."/naver");
+//        wp_remomkdir_p(SB_CACHE_DIR."/kobis");
+//    }
 }
 
 register_activation_hook(__FILE__, 'sb_movie_infobox_activate');

@@ -21,10 +21,10 @@ function fn_sb_movie_infobox_from_naver( $atts ) {
 
     $out =
 "
-<div class='shortcodes-imdb-infobox-wrapper'>
-    <span class='shortcodes-imdb-infobox-title'>제목 : {$json["Title"]}</span>
-    <div class='shortcodes-imdb-infobox-poster' ><img src='{$json["Poster"]}'/></div>
-    <div class='shortcodes-imdb-infobox-description-wrapper'>
+<div class='shortcodes-movie-infobox-wrapper'>
+    <span class='shortcodes-movie-infobox-title'>제목 : {$json["Title"]}</span>
+    <div class='shortcodes-movie-infobox-poster' ><img src='{$json["Poster"]}'/></div>
+    <div class='shortcodes-movie-infobox-description-wrapper'>
         <div>제작년도 : {$json["Year"]}</div>
         <div>개봉일 : {$json["Released"]}</div>
         <div>상영시간 : {$json["Runtime"]}</div>
@@ -41,12 +41,11 @@ function fn_sb_movie_infobox_from_naver( $atts ) {
 
 function fn_sb_movie_infobox_cache_from_naver($id, $detailType)
 {
-    include_once("../inc/phpQuery-onefile.php");
 //    $cacheage = get_option('imdbcacheage', -1);
     $cacheage = -1;
-    $imageCacheDir = "{SB_CACHE_DIR}/naver/{$id}.jpg";
-    $imageCacheUrl = "{SB_CACHE_URL}/naver/{$id}.jpg";
-    $jsonCacheDir = "{SB_CACHE_DIR}/naver/{$id}.json";
+    $imageCacheDir = SB_CACHE_DIR."/naver/{$id}.jpg";
+    $imageCacheUrl = SB_CACHE_URL."/naver/{$id}.jpg";
+    $jsonCacheDir = SB_CACHE_DIR."/naver/{$id}.json";
 
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
@@ -61,25 +60,21 @@ function fn_sb_movie_infobox_cache_from_naver($id, $detailType)
 //        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
 
         $current_charset = get_bloginfo('charset');
-        $phpquery = phpQuery::newDocumentHTML($rawResponse, $current_charset);
-        phpQuery::selectDocument($phpquery);
+//        $doc = phpQuery::newDocumentHTML($rawResponse, $current_charset);
+        $doc = phpQuery::newDocumentHTML($rawResponse);
+        phpQuery::selectDocument($doc);
 
-        $titleElement = pq('title');
-        $title = $titleElement->html();
-        echo("<br/>11111");
-        echo($title);
-        echo("<br/>11111");
+        $json['Title'] = pq("#content > div.article > div.mv_info_area > div.mv_info > h3 > a:nth-child(1)")->html();
+        $json['Poster'] = pq("#content > div.article > div.mv_info_area > div.poster > a > img")->attr('src');
+        $json['Year'] = pq("#content > div.article > div.mv_info_area > div.mv_info > strong")->html();
+        $json['Released'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(2) > p > span:nth-child(4)")->html();
+        $json['Runtime'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(2) > p > span:nth-child(3)")->html();
+        $json['Genre'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(2) > p > span:nth-child(1)")->html();
+        $json['Director'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(4) > p > a")->html();
+        $json['Language'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(2) > p > span:nth-child(2) > a")->html();
+        $json['Country'] = pq("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(2) > p > span:nth-child(2) > a")->html();
 
-        $html_content = htmlentities( $title )  .  ' <em>(Stock Info Provided by CWK)</em>';
-        $html_content .= pq("#content > div.article > div.mv_info_area > div.poster")->html();
 
-        echo("<br/>22222");
-        echo($html_content);
-        echo("<br/>222222");
-
-        $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
-        $json = json_decode($rawResponse, true);
-//        echo("jsonResult". $jsonResult . "<br/>");
         $img = file_get_contents_curl_from_naver($json['Poster']);
         $jsonResult = file_put_contents($imageCacheDir, $img);
         $json['Poster'] = $imageCacheUrl;
