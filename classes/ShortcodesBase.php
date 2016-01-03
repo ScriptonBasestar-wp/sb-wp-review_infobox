@@ -49,8 +49,8 @@ abstract class ShortcodesBase
 
 	public function cache($id, $detailType)
 	{
-//		$cacheage = get_option('imdbcacheage', -1);
-		$cacheage = $this -> cacheage;
+		$cacheage = get_option('sbcacheage', -1);
+//		$cacheage = $this -> cacheage;
 
 		$imageCacheDir = "{SB_CACHE_DIR}/{$this -> moduleName}/{$id}.jpg";
 		$imageCacheUrl = "{SB_CACHE_URL}/{$this -> moduleName}/{$id}.jpg";

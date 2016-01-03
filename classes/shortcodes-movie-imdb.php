@@ -1,14 +1,14 @@
 <?php
 /**
- * http://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do
- *
+ * http://www.omdbapi.com/?i=tt2446980&plot=short&r=json
+ * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
  */
 
 // Shortcode Example
-// [sb_movie_infobox_from_naver id=tt2446980]
+// [sb_movie_infobox_from_imdb id=tt2446980]
 
-function fn_sb_movie_infobox_from_kobis( $atts ) {
-    extract(shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ));
+function fn_sb_movie_infobox_from_imdb( $atts ) {
+    extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
 
     if( !$id ) {
         return "Movie id null or unknown error : " . $id;
@@ -17,7 +17,7 @@ function fn_sb_movie_infobox_from_kobis( $atts ) {
         $detailType = 'short';
     }
 
-    $json = fn_sb_movie_infobox_cache_from_naver($id, $detailType);
+    $json = fn_sb_movie_infobox_cache($id, $detailType);
 
     $out =
 "
@@ -41,17 +41,18 @@ function fn_sb_movie_infobox_from_kobis( $atts ) {
 
 function fn_sb_movie_infobox_cache($id, $detailType)
 {
-//    $cacheage = get_option('kobiscacheage', -1);
-    $cacheage = -1;
-    $imageCacheDir = SB_CACHE_DIR."/kobis/{$id}.jpg";
-    $imageCacheUrl = SB_CACHE_URL."/kobis/{$id}.jpg";
-    $jsonCacheDir = SB_CACHE_DIR."/kobis/{$id}.json";
+    $cacheage = get_option('sbcacheage', -1);
+
+    $imageCacheDir = SB_CACHE_DIR."/imdb/{$id}.jpg";
+    $imageCacheUrl = SB_CACHE_URL."/imdb/{$id}.jpg";
+    $jsonCacheDir = SB_CACHE_DIR."/imdb/{$id}.json";
 
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
         !file_exists($jsonCacheDir) || ($cacheage > -1 && filemtime($jsonCacheDir) < (time() - $cacheage))
     ) {
-        $url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=d9d4dd7891200b8a8217717e9fdbfd24&movieNm={$id}";
+        //$url = "http://www.omdbapi.com/?i=".$movieid."&plot=short&r=json";
+        $url = "http://www.omdbapi.com/?i={$id}&plot={$detailType}&r=json";
         $http_args = array(
             'user-agent' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
         );
@@ -88,4 +89,4 @@ function file_get_contents_curl($url)
     return $data;
 }
 
-add_shortcode( 'sb_movie_infobox_from_kobis', 'fn_sb_movie_infobox_from_kobis');
+add_shortcode( 'sb_movie_infobox_from_imdb', 'fn_sb_movie_infobox_from_imdb');

@@ -22,18 +22,21 @@ define('SB_CACHE_URL', $upload_dir['baseurl'] . "/sb_cache");
 
 include_once("inc/phpQuery-onefile.php");
 //include("classes/filter-imdb-button.php");
-include("classes/shortcodes-imdb.php");
-include("classes/shortcodes-naver.php");
+include("classes/shortcodes-movie-imdb.php");
+include("classes/shortcodes-movie-naver.php");
+include("classes/shortcodes-book-interpark.php");
 wp_enqueue_style( 'shortcodes-movie', plugins_url( 'css/shortcodes-movie.css', __FILE__ ));
+wp_enqueue_style( 'shortcodes-book', plugins_url( 'css/shortcodes-book.css', __FILE__ ));
 //wp_enqueue_style( 'stylesheet', plugins_url( 'shortcodes-movie.css', __FILE__ ));
 
 
 
 
 
-function sb_movie_infobox_activate()
+function sb_review_infobox_activate()
 {
-//    add_option('imdbcacheage', -1);
+    add_option('sbcacheage', -1);
+    add_option('sbinterparkkey', "E7510CBA0498562C8F7D45CBAFC6B7718C0C0BBEB491C9B5145A2BB11B7E54B7");
 //    add_option('imdbheadbg', 'FFCC00');
 //    add_option('imdbheadfg', 'FFFFFF');
 //    add_option('imdbbodybg', 'F4F3D9');
@@ -46,13 +49,14 @@ function sb_movie_infobox_activate()
         wp_mkdir_p(SB_CACHE_DIR."/imdb");
         wp_mkdir_p(SB_CACHE_DIR."/naver");
         wp_mkdir_p(SB_CACHE_DIR."/kobis");
+        wp_mkdir_p(SB_CACHE_DIR."/interpark");
     }
 }
 
-function sb_movie_infobox_deactivate()
+function sb_review_infobox_deactivate()
 {
-//    delete_option('imdbcacheage');
-//    delete_option('imdbheadbg');
+    delete_option('sbcacheage');
+    delete_option('sbinterparkkey');
 //    delete_option('imdbheadfg');
 //    delete_option('imdbbodybg');
 //    delete_option('imdbbodyfg');
@@ -67,7 +71,7 @@ function sb_movie_infobox_deactivate()
 //    }
 }
 
-register_activation_hook(__FILE__, 'sb_movie_infobox_activate');
-register_deactivation_hook(__FILE__, 'sb_movie_infobox_deactivate');
+register_activation_hook(__FILE__, 'sb_review_infobox_activate');
+register_deactivation_hook(__FILE__, 'sb_review_infobox_deactivate');
 
 ?>

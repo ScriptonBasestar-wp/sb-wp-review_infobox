@@ -41,8 +41,8 @@ function fn_sb_movie_infobox_from_naver( $atts ) {
 
 function fn_sb_movie_infobox_cache_from_naver($id, $detailType)
 {
-//    $cacheage = get_option('imdbcacheage', -1);
-    $cacheage = -1;
+    $cacheage = get_option('sbcacheage', -1);
+
     $imageCacheDir = SB_CACHE_DIR."/naver/{$id}.jpg";
     $imageCacheUrl = SB_CACHE_URL."/naver/{$id}.jpg";
     $jsonCacheDir = SB_CACHE_DIR."/naver/{$id}.json";
