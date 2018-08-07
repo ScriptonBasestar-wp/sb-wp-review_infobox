@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+
+  # backend
+  data-mysql:
+  # https://hub.docker.com/_/mysql/
+    image: mysql
+    container_name: data-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=qwer1234!@#$$
+    volumes:
+      # - test/mysql/data:/var/lib/mysql
+      # - test/mysql/conf:/etc/mysql
+      - ./test/mysql/init:/docker-entrypoint-initdb.d
+
+  #wordpress
+  wp-test:
+    build:
+      context: ./
+      dockerfile: Dockerfile-wp
+    container_name: wp-test
+    environment:
+      # - VIRTUAL_HOST=test.polypia.net
+      - WORDPRESS_DB_HOST=data-mysql
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=qwer1234!@#$$
+      - WORDPRESS_DB_NAME=test_wordpress
+    links:
+      - data-mysql
+    depends_on:
+      - data-mysql
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/sb-wp-review_infobox
+      - ./test/wp/init/wp-init.sh:/wp-init.sh
+    command: 
+      - wp-init.sh
+    ports:
+      - "8000:80"

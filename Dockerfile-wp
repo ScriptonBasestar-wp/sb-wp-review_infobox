@@ -1,0 +1,13 @@
+FROM wordpress:php7.1-apache
+
+WORKDIR /app
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /app
+RUN php /app/wp-cli.phar --info
+
+RUN chmod +x wp-cli.phar
+    mv wp-cli.phar /usr/local/bin/
+    ln -s /usr/local/bin/wp-cli.phar /usr/local/bin/wp-cli
+    ln -s /usr/local/bin/wp-cli.phar /usr/local/bin/wp
+RUN wp --info
+
+WORKDIR /var/www/html

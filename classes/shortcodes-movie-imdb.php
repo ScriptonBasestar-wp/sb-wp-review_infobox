@@ -3,9 +3,9 @@
  * http://www.omdbapi.com/?i=tt2446980&plot=short&r=json
  * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
  */
-// Shortcode Example
-// [sb_movie_infobox_from_imdb id="tt2446980"]
 
+// Shortcode Example
+// [sb_movie_infobox_from_imdb id=tt2446980]
 
 function fn_sb_movie_infobox_from_imdb( $atts ) {
     extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
@@ -21,10 +21,10 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
 
     $out =
 "
-<div class='shortcodes-imdb-infobox-wrapper'>
-    <span class='shortcodes-imdb-infobox-title'>제목 : {$json["Title"]}</span>
-    <div class='shortcodes-imdb-infobox-poster' ><img src='{$json["Poster"]}'/></div>
-    <div class='shortcodes-imdb-infobox-description-wrapper'>
+<div class='shortcodes-movie-infobox-wrapper'>
+    <span class='shortcodes-movie-infobox-title'>제목 : {$json["Title"]}</span>
+    <div class='shortcodes-movie-infobox-poster' ><img src='{$json["Poster"]}'/></div>
+    <div class='shortcodes-movie-infobox-description-wrapper'>
         <div>제작년도 : {$json["Year"]}</div>
         <div>개봉일 : {$json["Released"]}</div>
         <div>상영시간 : {$json["Runtime"]}</div>
@@ -41,11 +41,11 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
 
 function fn_sb_movie_infobox_cache($id, $detailType)
 {
-//    $cacheage = get_option('imdbcacheage', -1);
-    $cacheage = -1;
-    $imageCacheDir = SB_CACHE_DIR . "/" . $id . ".jpg";
-    $imageCacheUrl = SB_CACHE_URL . "/" . $id . ".jpg";
-    $jsonCacheDir = SB_CACHE_DIR . "/" . $id . ".json";
+    $cacheage = get_option('sbcacheage', -1);
+
+    $imageCacheDir = SB_CACHE_DIR."/imdb/{$id}.jpg";
+    $imageCacheUrl = SB_CACHE_URL."/imdb/{$id}.jpg";
+    $jsonCacheDir = SB_CACHE_DIR."/imdb/{$id}.json";
 
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
@@ -59,8 +59,9 @@ function fn_sb_movie_infobox_cache($id, $detailType)
         $rawResponse = wp_remote_request($url, $http_args);
         $rawResponse = $rawResponse['body'];
 //        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
-        $json = json_decode($rawResponse, true);
+
         $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
+        $json = json_decode($rawResponse, true);
 //        echo("jsonResult". $jsonResult . "<br/>");
         $img = file_get_contents_curl($json['Poster']);
         $jsonResult = file_put_contents($imageCacheDir, $img);
@@ -89,16 +90,3 @@ function file_get_contents_curl($url)
 }
 
 add_shortcode( 'sb_movie_infobox_from_imdb', 'fn_sb_movie_infobox_from_imdb');
-
-// Shortcode Example 2
-// [cwk-example]Here goes your content.[/cwk-example]
-
-
-function fn_sb_movie_infobox_example_style( $atts, $content = null ) {
-    return '<div classes="cwk-example">' . $content . '</div>';
-}
-
-wp_enqueue_style( 'shortcodes-imdb', plugins_url( '../css/shortcodes-imdb.css', __FILE__ ));
-//wp_enqueue_style( 'stylesheet', plugins_url( 'shortcodes-imdb.css', __FILE__ ));
-add_shortcode( 'sb_movie_infobox_example_style', 'fn_sb_movie_infobox_example_style');
-
