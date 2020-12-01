@@ -1,11 +1,10 @@
 <?php
 /**
- * http://book.interpark.com/api/search.api?key=E7510CBA0498562C8F7D45CBAFC6B7718C0C0BBEB491C9B5145A2BB11B7E54B7&query=9788992717199&queryType=isbn&output=json
+ * http://book.interpark.com/api/search.api?key={API_KEY}&query=9788992717199&queryType=isbn&output=json
  *
+ * [sb_book_infobox_from_interpark id=9788992717199]
  */
 
-// Shortcode Example
-// [sb_book_infobox_from_interpark id=9788992717199]
 
 function fn_sb_book_infobox_from_interpark( $atts ) {
     extract(shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ));
@@ -17,36 +16,39 @@ function fn_sb_book_infobox_from_interpark( $atts ) {
         $detailType = 'short';
     }
 
-    $json = fn_sb_book_infobox_cache_from_interpark($id, $detailType);
+    $cacheage = get_option('sbcacheage', -1);
+    $api_client_key = get_option('api_interpark_client_key', null);
+    if( !$api_client_key ) {
+        return "api_interpark_client_key is required";
+    }
 
-    $out =
+    $imageCacheDir = SB_CACHE_DIR."/interpark/{$id}.jpg";
+    $imageCacheUrl = SB_CACHE_URL."/interpark/{$id}.jpg";
+    // $imageCacheUrl = "{SB_CACHE_URL}/{$this -> moduleName}/{$id}.jpg";
+    $jsonCacheDir = SB_CACHE_DIR."/interpark/{$id}.json";
+
+    $dataJson = fn_sb_movie_infobox_cache($id, $detailType, $imageCacheDir, $jsonCacheDir, $cacheage, $api_client_key);
+
+    $outHtml =
 "
 <div class='shortcodes-book-infobox-wrapper'>
-    <span class='shortcodes-book-infobox-title'>제목 : {$json["title"]}</span>
-    <div class='shortcodes-book-infobox-poster' ><img src='{$json["coverLargeUrl"]}'/></div>
+    <span class='shortcodes-book-infobox-title'>제목 : {$dataJson["title"]}</span>
+    <div class='shortcodes-book-infobox-poster' ><img src='{$imageCacheUrl}'/></div>
     <div class='shortcodes-book-infobox-description-wrapper'>
-        <div>출판일 : {$json["pubDate"]}</div>
-        <div>저자 : {$json["author"]}</div>
-        <div>역자 : {$json["translator"]}</div>
-        <div>isbn : {$json["isbn"]}</div>
-        <div>출판사 : {$json["publisher"]}</div>
+        <div>출판일 : {$dataJson["pubDate"]}</div>
+        <div>저자 : {$dataJson["author"]}</div>
+        <div>역자 : {$dataJson["translator"]}</div>
+        <div>isbn : {$dataJson["isbn"]}</div>
+        <div>출판사 : {$dataJson["publisher"]}</div>
     </div>
-    <div><a href='{$json["link"]}'> 구매하기</a></div>
+    <div><a href='{$dataJson["link"]}'> 구매하기</a></div>
 </div>
 ";
-//  return 'SB review infobox operation failed: ' . $response->get_error_message();
-    return $out;
+    return $outHtml;
 }
 
 function fn_sb_book_infobox_cache_from_interpark($id, $detailType)
 {
-    $interparkkey = get_option('sbinterparkkey', -1);
-    $cacheage = get_option('sbcacheage', -1);
-
-    $imageCacheDir = SB_CACHE_DIR."/interpark/{$id}.jpg";
-    $imageCacheUrl = SB_CACHE_URL."/interpark/{$id}.jpg";
-    $jsonCacheDir = SB_CACHE_DIR."/interpark/{$id}.json";
-
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
         !file_exists($jsonCacheDir) || ($cacheage > -1 && filemtime($jsonCacheDir) < (time() - $cacheage))
@@ -57,25 +59,23 @@ function fn_sb_book_infobox_cache_from_interpark($id, $detailType)
         );
         $rawResponse = wp_remote_request($url, $http_args);
         $rawResponse = $rawResponse['body'];
-//        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
+        // $rawResponse = file_get_contents_curl($url);
 
-        $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
-        $json = json_decode($rawResponse, true);
-        $json = $json["item"][0];
-        $img = file_get_contents_curl($json['coverLargeUrl']);
+        _ = file_put_contents($jsonCacheDir, $rawResponse);
+        $dataJson = json_decode($rawResponse, true);
+        $dataJson = $dataJson["item"][0];
 
-        $jsonResult = file_put_contents($imageCacheDir, $img);
-        $json['coverLargeUrl'] = $imageCacheUrl;
-    }else{
+        $dataImage = file_get_contents_curl($dataJson['coverLargeUrl']);
+        _ = file_put_contents($imageCacheDir, $dataImage);
+    } else {
         $rawResponse = file_get_contents($jsonCacheDir);
-        $json = json_decode($rawResponse, true);
-        $json = $json["item"][0];
-        $json['coverLargeUrl'] = $imageCacheUrl;
+        $dataJson = json_decode($rawResponse, true);
+        $dataJson = $dataJson["item"][0];
     }
-    return $json;
+    return $dataJson;
 }
 
-function file_get_contents_curl_from_interpark($url)
+function file_get_contents_curl($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_REFERER, 'http://www.interpark.com/');

@@ -1,11 +1,11 @@
 <?php
 /**
+ * https://www.imdb.com/title/tt2446980/?ref_=hm_fanfav_tt_2_pd_fp1
  * http://www.omdbapi.com/?i=tt2446980&plot=short&r=json
- * 참고 http://99webtools.com/blog/php-get-movie-information-from-imdb/
+ * 
+ * [sb_movie_infobox_from_imdb id=tt2446980]
  */
 
-// Shortcode Example
-// [sb_movie_infobox_from_imdb id=tt2446980]
 
 function fn_sb_movie_infobox_from_imdb( $atts ) {
     extract( shortcode_atts( array('id' => 0, 'detailType' => 'short' ), $atts, 'cwktag' ) );
@@ -17,13 +17,25 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
         $detailType = 'short';
     }
 
-    $json = fn_sb_movie_infobox_cache($id, $detailType);
+    $cacheage = get_option('sbcacheage', -1);
+    $api_client_id = get_option('api_imdb_client_id', null);
+    $api_client_secret = get_option('api_imdb_client_secret', null);
+    if( !$api_client_id || !$api_client_secret ) {
+        return "api_imdb_client_id, api_imdb_client_secret is required";
+    }
 
-    $out =
+    $imageCacheDir = SB_CACHE_DIR."/imdb/{$id}.jpg";
+    $imageCacheUrl = SB_CACHE_URL."/imdb/{$id}.jpg";
+    // $imageCacheUrl = "{SB_CACHE_URL}/{$this -> moduleName}/{$id}.jpg";
+    $jsonCacheDir = SB_CACHE_DIR."/imdb/{$id}.json";
+
+    $dataJson = fn_sb_movie_infobox_cache($id, $detailType, $imageCacheDir, $jsonCacheDir, $cacheage, $api_client_id, $api_client_secret);
+
+    $outHtml =
 "
 <div class='shortcodes-movie-infobox-wrapper'>
     <span class='shortcodes-movie-infobox-title'>제목 : {$json["Title"]}</span>
-    <div class='shortcodes-movie-infobox-poster' ><img src='{$json["Poster"]}'/></div>
+    <div class='shortcodes-movie-infobox-poster' ><img src='{$imageCacheUrl}'/></div>
     <div class='shortcodes-movie-infobox-description-wrapper'>
         <div>제작년도 : {$json["Year"]}</div>
         <div>개봉일 : {$json["Released"]}</div>
@@ -35,43 +47,34 @@ function fn_sb_movie_infobox_from_imdb( $atts ) {
     </div>
 </div>
 ";
-//  return 'SB movie infobox operation failed: ' . $response->get_error_message();
-    return $out;
+    return $outHtml;
 }
 
-function fn_sb_movie_infobox_cache($id, $detailType)
+function fn_sb_movie_infobox_cache($id, $detailType, $imageCacheDir, $jsonCacheDir, $cacheage, $api_client_id, $api_client_secret)
 {
-    $cacheage = get_option('sbcacheage', -1);
-
-    $imageCacheDir = SB_CACHE_DIR."/imdb/{$id}.jpg";
-    $imageCacheUrl = SB_CACHE_URL."/imdb/{$id}.jpg";
-    $jsonCacheDir = SB_CACHE_DIR."/imdb/{$id}.json";
-
     if (
         !file_exists($imageCacheDir) || ($cacheage > -1 && filemtime($imageCacheDir) < (time() - $cacheage)) ||
         !file_exists($jsonCacheDir) || ($cacheage > -1 && filemtime($jsonCacheDir) < (time() - $cacheage))
     ) {
-        //$url = "http://www.omdbapi.com/?i=".$movieid."&plot=short&r=json";
-        $url = "http://www.omdbapi.com/?i={$id}&plot={$detailType}&r=json";
+        // from web
+        $url = "https://www.omdbapi.com/?i={$id}&plot={$detailType}&r=json";
         $http_args = array(
             'user-agent' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
         );
         $rawResponse = wp_remote_request($url, $http_args);
         $rawResponse = $rawResponse['body'];
-//        $raw = file_get_contents_curl('http://www.omdbapi.com/?i=' . $id."&plot=short&r=json");
+        // $rawResponse = file_get_contents_curl($url);
 
-        $jsonResult = file_put_contents($jsonCacheDir, $rawResponse);
-        $json = json_decode($rawResponse, true);
-//        echo("jsonResult". $jsonResult . "<br/>");
-        $img = file_get_contents_curl($json['Poster']);
-        $jsonResult = file_put_contents($imageCacheDir, $img);
-        $json['Poster'] = $imageCacheUrl;
-    }else{
+        _ = file_put_contents($jsonCacheDir, $rawResponse);
+        $dataJson = json_decode($rawResponse, true);
+
+        $dataImage = file_get_contents_curl($dataJson['Poster']);
+        _ = file_put_contents($imageCacheDir, $dataImage);
+    } else {
         $rawResponse = file_get_contents($jsonCacheDir);
-        $json = json_decode($rawResponse, true);
-        $json['Poster'] = $imageCacheUrl;
+        $dataJson = json_decode($rawResponse, true);
     }
-    return $json;
+    return $dataJson;
 }
 
 function file_get_contents_curl($url)

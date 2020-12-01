@@ -1,0 +1,12 @@
+== Changelog ==
+
+= 목표 =
+* 설정 편집화면
+
+= 0.2 =
+* 영화정보 imdb, naver, kobis
+* 도서정보 interpark
+* GPLv3 적용
+
+= 0.1 =
+* 기본기능
